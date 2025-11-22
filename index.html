@@ -1211,18 +1211,14 @@
             }
         };
 
-        let currentLang = 'en';
+        let currentLang = 'vn';
 
         function setLanguage(lang) {
             currentLang = lang;
-
-            // Update button states
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            // Update all i18n elements
+            const btns = document.querySelectorAll('.lang-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            if (lang === 'en' && btns[0]) btns[0].classList.add('active');
+            if (lang === 'vn' && btns[1]) btns[1].classList.add('active');
             document.querySelectorAll('[data-i18n]').forEach(element => {
                 const key = element.getAttribute('data-i18n');
                 if (translations[lang][key]) {
@@ -1230,6 +1226,7 @@
                 }
             });
         }
+        setLanguage('vn');
 
         // Cursor glow effect
         const cursorGlow = document.querySelector('.cursor-glow');
