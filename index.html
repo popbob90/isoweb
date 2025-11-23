@@ -770,6 +770,81 @@
             transform: translate(0) scale(1);
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-secondary);
+            margin: auto;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            position: relative;
+            text-align: center;
+            animation: animatezoom 0.6s
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .modal-content p {
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+
+        .modal-content strong {
+            color: var(--text);
+        }
+
+        .close-button {
+            color: var(--text-muted);
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        @keyframes animatezoom {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .tm-coverflow { height: 280px; }
@@ -850,7 +925,7 @@
                     <button class="lang-btn" onclick="setLanguage('vn')">VN</button>
                 </div>
                 <a href="https://github.com/smart/laboratory" target="_blank" class="btn btn-outline">GitHub</a>
-                <a href="#" class="btn btn-primary" data-i18n="nav_get_started">Get Started</a>
+                <a href="#" class="btn btn-primary demo-btn" data-i18n="nav_get_started">Get Started</a>
             </div>
             <div class="mobile-toggle">
                 <i class="fas fa-bars"></i>
@@ -867,7 +942,7 @@
                 <p data-i18n="hero_desc">Seamless ISO compliance, advanced document control, and secure digital
                     signatures. All in one open-source platform.</p>
                 <div class="hero-btns">
-                    <a href="https://iso.senpos.vn/" class="btn btn-primary btn-lg"><span data-i18n="btn_download">Join Demo Now</span> <i
+                    <a href="#" class="btn btn-primary btn-lg demo-btn"><span data-i18n="btn_download">Join Demo Now</span> <i
                             class="fas fa-arrow-right"></i></a>
                     <a href="https://github.com/QMS/QMS" class="btn btn-glass btn-lg"><i
                             class="fab fa-whatsapp"></i> <span data-i18n="btn_star">Contact Us</span></a>
@@ -1051,7 +1126,7 @@
                 <h2 data-i18n="cta_title">Ready to Transform Your QMS?</h2>
                 <p data-i18n="cta_desc">Join thousands of users managing quality with Smart laboratory.</p>
                 <div class="cta-btns">
-                    <a href="https://iso.senpos.vn/" class="btn btn-primary btn-lg" data-i18n="btn_demo">Join demo now</a>
+                    <a href="#" class="btn btn-primary btn-lg demo-btn" data-i18n="btn_demo">Join demo now</a>
                     <a href="https://iso.senpos.vn/" class="btn btn-outline btn-lg" data-i18n="btn_docs">View Documentation</a>
                 </div>
             </div>
@@ -1089,6 +1164,22 @@
             <p>&copy; Base on flikiso QMS. <span data-i18n="footer_copyright">Open Source under MIT License. Custom by StarOn</span></p>
         </div>
     </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="close-button">&times;</span>
+            <h2>Thông tin đăng nhập demo</h2>
+            <p>Trang web demo: <a href="https://iso.senpos.vn/" target="_blank">https://iso.senpos.vn/</a></p>
+            <p>Tài khoản: <strong>demo@demo</strong></p>
+            <p>Mật khẩu: <strong>demo@demo</strong></p>
+            <p>Bạn có đồng ý chuyển đến trang demo?</p>
+            <div class="modal-buttons">
+                <button id="agreeButton" class="btn btn-primary">Đồng ý</button>
+                <button id="cancelButton" class="btn btn-outline">Hủy bỏ</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Translations
@@ -1197,6 +1288,7 @@
                 cta_title: "Sẵn sàng Chuyển đổi QMS của bạn?",
                 cta_desc: "Tham gia cùng hàng ngàn người dùng quản lý chất lượng với QMS.",
                 btn_download_v23: "Tải v2.3",
+                btn_demo: "Đăng nhập demo",
                 btn_docs: "Xem Tài liệu",
                 footer_tagline: "Hệ thống Quản lý Chất lượng Mã nguồn mở.",
                 footer_resources: "Tài nguyên",
@@ -1297,15 +1389,69 @@
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
                 }
             });
         });
+
+        // Login Modal Logic
+        const loginModal = document.getElementById('loginModal');
+        const closeButton = document.querySelector('.close-button');
+        const agreeButton = document.getElementById('agreeButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const demoButtons = document.querySelectorAll('.demo-btn');
+
+        // Show modal when clicking demo buttons
+        demoButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (loginModal) {
+                    loginModal.classList.add('show');
+                }
+            });
+        });
+
+        // Close modal function
+        function closeModal() {
+            if (loginModal) {
+                loginModal.classList.remove('show');
+            }
+        }
+
+        // Close button
+        if (closeButton) {
+            closeButton.addEventListener('click', closeModal);
+        }
+
+        // Cancel button
+        if (cancelButton) {
+            cancelButton.addEventListener('click', closeModal);
+        }
+
+        // Agree button - redirect to demo
+        if (agreeButton) {
+            agreeButton.addEventListener('click', function() {
+                window.location.href = 'https://iso.senpos.vn/';
+            });
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target == loginModal) {
+                closeModal();
+            }
+        });
     </script>
+
 </body>
+
+</html>
